@@ -7,7 +7,7 @@ Code for CVPR submission 9156. Included are the introduced applications of diffe
 - Parameter Optimization (Parametric Style Transfer and checks for individual parameters)
 
 We included (and will open-source) the XDoG differentiable effect. 
-Note that due to proprietary code, we can't include or open-source our Watercolor and Toon effect implementation. Please check the provided supplemental pdf and video for an overview of results.
+Note that due to proprietary code, we can't include or open-source our Watercolor, Oilpaint and Toon effect implementation. Please check the provided supplemental pdf and video for an overview of results.
 
 Trained models can be downloaded from [google drive](https://drive.google.com/drive/folders/1WdRDw7-ivrpXNmbccMJ4HbtrV-zloD9o?usp=sharing), and put in the trained_models directory (see below).
 
