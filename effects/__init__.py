@@ -6,6 +6,6 @@ xdog_params = ["blackness", "contour", "strokeWidth", "details", "saturation", "
 
 def get_default_settings(name):
     if name == "xdog":
-        return XDoGEffect(), portrait_preset, xdog_par
+        return XDoGEffect(), portrait_preset, xdog_params
     else:
         raise ValueError(f"effect {name} not found")
