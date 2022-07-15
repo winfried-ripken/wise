@@ -1,13 +1,13 @@
 # Differentiable algorithmic stylization effects in PyTorch
 
-Code for CVPR submission 9156. Included are the introduced applications of differentiable algorithmic stylization effects using:
+Code for our ECCV 2022 paper "WISE: Whitebox Image Stylization by Example-based Learning". Included are the introduced applications of differentiable algorithmic stylization effects using:
 
 - Global Parameter Prediction
 - Local Parameter Prediction
 - Parameter Optimization (Parametric Style Transfer and checks for individual parameters)
 
-We included (and will open-source) the XDoG differentiable effect. 
-Note that due to proprietary code, we can't include or open-source our Watercolor, Oilpaint and Toon effect implementation. Please check the provided supplemental pdf and video for an overview of results.
+We included the differentiable XDoG effect. 
+Note that due to proprietary code, we can't include or open-source our Watercolor, Oilpaint and Toon effect implementation. 
 
 Trained models can be downloaded from [google drive](https://drive.google.com/drive/folders/1WdRDw7-ivrpXNmbccMJ4HbtrV-zloD9o?usp=sharing), and put in the trained_models directory (see below).
 
