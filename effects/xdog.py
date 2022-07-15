@@ -10,12 +10,12 @@ from effects.xdog_pass0 import XDoGPass0Effect
 from effects.xdog_pass1 import XDoGPass1Effect
 from helpers.effect_base import EffectBase
 from helpers.index_helper import IndexHelper
-from helpers.visual_parameter_def import toon_vp_ranges
+from helpers.visual_parameter_def import xdog_vp_ranges
 
 
 class XDoGEffect(EffectBase):
     def __init__(self, repeat_xdog_channel=True):
-        super().__init__(toon_vp_ranges)
+        super().__init__(xdog_vp_ranges)
 
         # this parameter controls the latency - accuracy tradeoff
         dim_kernsize = 5
