@@ -10,7 +10,7 @@ from torchvision.transforms import ToPILImage
 
 from effects import xdog_params
 from effects.xdog import XDoGEffect
-from helpers import torch_to_np, load_image_cuda
+from helpers import torch_to_np, load_image
 from helpers.apply_visual_effect import ApplyVisualEffect
 
 
@@ -24,7 +24,7 @@ if __name__ == '__main__':
     m.eval().cuda()
 
     effect = ApplyVisualEffect(effect_type=XDoGEffect).cuda()
-    xxx = load_image_cuda(args.file)#.cpu()
+    xxx = load_image(args.file)#.cpu()
     xxx = F.interpolate(xxx, (512, 512))
 
     test = m(xxx)

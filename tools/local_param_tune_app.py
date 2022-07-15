@@ -26,6 +26,9 @@ from effects import get_default_settings
 st.set_page_config(layout="wide")
 state = session_state.get(file_load_key="123", canvas_key="canvas")
 
+device = st.sidebar.selectbox(
+    "Device:", ("cpu", "cuda:0")
+)
 im_path = st.sidebar.file_uploader("Load content image:", type=["png", "jpg"])
 if not im_path:
     st.info("please select an image first")
@@ -39,8 +42,8 @@ drawing_mode = st.sidebar.selectbox(
 
 effect, preset, param_set = get_default_settings(drawing_mode)
 effect.enable_checkpoints()
-effect.cuda()
-org_cuda = np_to_torch(img_org).cuda()
+effect.to(device)
+org_cuda = np_to_torch(img_org).to(device)
 
 vp_path = st.sidebar.file_uploader("Load visual parameters:", type=["pt"], key=state.file_load_key)
 if vp_path:
@@ -112,7 +115,7 @@ with coll1:
 
 res_data = None
 if canvas_result.image_data is not None:
-    abc = np_to_torch(canvas_result.image_data.astype(np.float)).sum(dim=1, keepdim=True).cuda()
+    abc = np_to_torch(canvas_result.image_data.astype(np.float)).sum(dim=1, keepdim=True).to(device)
 
     if invert_selection:
         abc = abc * (- 1.0) + 1.0
@@ -126,8 +129,8 @@ if canvas_result.image_data is not None:
         gauss2dx = Gauss2DEffect(dxdy=[1.0, 0.0], dim_kernsize=5)
         gauss2dy = Gauss2DEffect(dxdy=[0.0, 1.0], dim_kernsize=5)
 
-        vp_smoothed = gauss2dx(vp, torch.tensor(sigma).cuda())
-        vp_smoothed = gauss2dy(vp_smoothed, torch.tensor(sigma).cuda())
+        vp_smoothed = gauss2dx(vp, torch.tensor(sigma).to(device))
+        vp_smoothed = gauss2dy(vp_smoothed, torch.tensor(sigma).to(device))
 
         print(res_data.shape)
         print(vp.shape)

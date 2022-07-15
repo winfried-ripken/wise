@@ -14,12 +14,12 @@ def pil_resize_long_edge_to(pil, trg_size):
     return resized
 
 
-def load_image_cuda(path, long_edge=None):
+def load_image(path, long_edge=None, cuda=True):
     img = Image.open(path).convert("RGB")
     if long_edge is not None:
         img = pil_resize_long_edge_to(img, long_edge)
 
-    return np_to_torch(img).cuda()
+    return np_to_torch(img) if not cuda else np_to_torch(img).cuda()
 
 
 def save_as_image(tensor, path, clamp=False):

@@ -9,11 +9,10 @@ from pathlib import Path
 
 from effects import get_default_settings, XDoGEffect
 from effects.gauss2d_xy_separated import Gauss2DEffect
-from helpers import load_image_cuda, save_as_image
+from helpers import load_image, save_as_image
 from helpers.losses import loss_from_string
-from helpers.visual_parameter_def import coffee_preset
+from helpers.visual_parameter_def import portrait_preset
 from parameter_optimization.optimization_utils import run_optimization_loop, ParameterContainer
-from parameter_optimization.strotss_org import execute_style_transfer
 
 CONFIG = {
     "lr_start": 0.1,
@@ -30,24 +29,21 @@ CONFIG = {
 
 def single_optimize(module, preset, loss_name, s, t,
                     write_video=False, base_dir=f"{os.path.dirname(__file__)}/../experiments/result", prepare_effect=None,
-                    smoothing=True):
+                    smoothing=True, cpu=False):
     loss_f = loss_from_string(loss_name)
     Path(base_dir).mkdir(exist_ok=True, parents=True)
 
     output_name = f"{base_dir}/OUT_{Path(s).name[:5]}_{loss_name}"
-    batch_im = load_image_cuda(s)
-    targets = load_image_cuda(t)
+    batch_im = load_image(s, cuda=not cpu)
+    targets = load_image(t, cuda=not cpu)
     batch_im = F.interpolate(batch_im, (targets.size(2), targets.size(3)))
 
-    #if isinstance(module, WatercolorEffect):
-    #    print("watercolor effect")
-    #    module.preprocess = AdaptHueEffect(batch_im, smooth=False)
     if isinstance(module, XDoGEffect):
         module.smoothing_sigma = 1.3
         module.xd1_phi = 1.0
 
     module.enable_checkpoints()
-    module = module.cuda()
+    module = module if cpu else module.cuda()
 
     if prepare_effect is not None:
         module = prepare_effect(module)
@@ -63,21 +59,20 @@ def single_optimize(module, preset, loss_name, s, t,
         if i in CONFIG["smoothing_steps"] and smoothing and CONFIG["local_params"]:
             # smooth the parameters every few iterations
             # this should decrease artifacts
-            vp_smoothed = gauss2dx(grad_vp.vp.data, torch.tensor(CONFIG["sigma_large"]).cuda())
-            grad_vp.vp.data = gauss2dy(vp_smoothed, torch.tensor(CONFIG["sigma_large"]).cuda())
+            sigma_large = torch.tensor(CONFIG["sigma_large"])
+            if not cpu:
+                sigma_large = sigma_large.cuda()
+
+            vp_smoothed = gauss2dx(grad_vp.vp.data, sigma_large)
+            grad_vp.vp.data = gauss2dy(vp_smoothed, sigma_large)
   
     result, _ = run_optimization_loop(module, grad_vp, batch_im, targets, verbose=True, loss_f=loss_f, config=CONFIG,
-                                      vid=writer, callback=cbck)
+                                      vid=writer, callback=cbck, device="cpu" if cpu else "cuda:0")
 
     if writer is not None:
         writer.close()
 
     save_as_image(result, f"{output_name}.png", clamp=True)
-
-    #if isinstance(module, WatercolorEffect):
-    #    save_as_image(module.preprocess(batch_im), f"{output_name}_input.png", clamp=True)
-    #else:
-    #    save_as_image(batch_im, f"{output_name}_input.png", clamp=True)
 
     # save the parameter maps
     xxx = grad_vp()
@@ -86,18 +81,19 @@ def single_optimize(module, preset, loss_name, s, t,
 
 def strotss_process(s, t, base_dir=f"{os.path.dirname(__file__)}/../experiments/result",
                     resize_dim=1024, effect=XDoGEffect(),
-                    preset=coffee_preset):
+                    preset=portrait_preset,
+                    cpu=False):
 
     Path(base_dir).mkdir(exist_ok=True, parents=True)
     base_dir = Path(base_dir)
     strotss_out = base_dir / ("str_" + Path(s).name)
 
     if not Path(strotss_out).exists():
-        result = execute_style_transfer(s, t, resize_dim)
+        #result = execute_style_transfer(s, t, resize_dim, device="cpu" if cpu else "cuda:0")
         result.save(strotss_out)
 
     single_optimize(effect, preset, "l1", s, str(strotss_out), write_video=True,
-                    base_dir=str(base_dir))
+                    base_dir=str(base_dir), cpu=cpu)
 
 
 if __name__ == '__main__':
@@ -105,7 +101,9 @@ if __name__ == '__main__':
     parser.add_argument('--effect', help='which effect to use', default="xdog")
     parser.add_argument('--content', help='content image', default=f"{os.path.dirname(__file__)}/../experiments/source/portrait.png")
     parser.add_argument('--style', help='style image', default=f"{os.path.dirname(__file__)}/../experiments/target/xdog_portrait.jpg")
+    parser.add_argument('--cpu', help='run on cpu', dest="cpu", action="store_true")
+    parser.set_defaults(cpu=False)
 
     args = parser.parse_args()
     effect, preset, _ = get_default_settings(args.effect)
-    strotss_process(args.content, args.style, effect=effect, preset=preset)
+    strotss_process(args.content, args.style, effect=effect, preset=preset, cpu=args.cpu)

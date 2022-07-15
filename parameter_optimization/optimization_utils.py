@@ -25,7 +25,7 @@ CONFIG = {
 
 
 def run_optimization_loop(module, vp_grad, data_in, target, verbose=True, loss_f=mse_loss,
-                          config=None, vp_aux_loss=None, vid=None, callback=None):
+                          config=None, vp_aux_loss=None, vid=None, callback=None, device="cuda:0"):
     if config is None:
         config = CONFIG
 
@@ -33,14 +33,14 @@ def run_optimization_loop(module, vp_grad, data_in, target, verbose=True, loss_f
     print(config)
 
     module.train()
-    module.cuda()
-    data_in = data_in.cuda()
-    target = target.cuda() 
+    module.to(device)
+    data_in = data_in.to(device)
+    target = target.to(device)
 
     var_loss = TotalVariationLoss()
 
     if isinstance(loss_f, torch.nn.Module):
-        loss_f = loss_f.cuda()
+        loss_f = loss_f.to(device)
 
     lr = config["lr_start"]
     optimizer = Adam(list(vp_grad.parameters()) + list(module.parameters()), lr=lr)
