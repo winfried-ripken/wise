@@ -111,6 +111,8 @@ Example call:
 python -m parameter_optimization.check_individual_parameters --effect xdog
 ```
 
+## Disclaimer
+The code for the parametric style transfer algorithm is provided by [David Futschik](https://github.com/futscdav/strotss). Find more details about the algorithm in the [original paper](https://arxiv.org/abs/1904.12785).
 
 ## Sources of images in experiments folder
 - source/portrait.png and images in nprp: Rosin, Paul L., et al. "NPRportrait 1.0: A Three-Level Benchmark for Non-Photorealistic Rendering of Portraits." arXiv preprint arXiv:2009.00633 (2020).

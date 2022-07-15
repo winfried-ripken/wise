@@ -11,6 +11,10 @@ import PIL
 from time import time
 from argparse import ArgumentParser
 
+# This code is adapted from https://github.com/futscdav/strotss
+# Copyright by David Futschik
+# with only minor changes
+
 
 class Vgg16_Extractor(nn.Module):
     def __init__(self, space):
@@ -453,13 +457,12 @@ def strotss(content_pil, style_pil, content_weight=1.0 * 16.0, device='cuda:0', 
     return np_to_pil(result_image * 255.)
 
 
-def execute_style_transfer(content_path, style_path, resize_to, weight=1.0):
+def execute_style_transfer(content_path, style_path, resize_to, weight=1.0, device="cuda:0"):
     content_pil, style_pil = pil_loader(content_path), pil_loader(style_path)
     content_weight = weight * 16.0
 
-    device = "cuda:0"
     return strotss(pil_resize_long_edge_to(content_pil, resize_to),
-                     pil_resize_long_edge_to(style_pil, resize_to), content_weight, device, "uniform")
+                   pil_resize_long_edge_to(style_pil, resize_to), content_weight, device, "uniform")
 
 
 if __name__ == "__main__":
