@@ -1,6 +1,6 @@
 # Differentiable algorithmic stylization effects in PyTorch
 
-Code for our ECCV 2022 paper "WISE: Whitebox Image Stylization by Example-based Learning". Included are the introduced applications of differentiable algorithmic stylization effects using:
+Code for our ECCV 2022 paper "WISE: Whitebox Image Stylization by Example-based Learning" [arxiv version](https://arxiv.org/abs/2207.14606). Watch an introductory video [here](https://www.youtube.com/watch?v=GSVI26DDQrc). Included are the introduced applications of differentiable algorithmic stylization effects using:
 
 - Global Parameter Prediction
 - Local Parameter Prediction
