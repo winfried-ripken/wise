@@ -1,6 +1,21 @@
-# Differentiable algorithmic stylization effects in PyTorch
+# Differentiable algorithmic stylization effects (ECCV'22)
+### [Project Page](https://ivpg.hpi3d.de/wise) | [Video](https://youtu.be/GSVI26DDQrc) | [Paper](https://arxiv.org/abs/2207.14606) | [Poster](https://ivpg.hpi3d.de/wise/material/poster_eccv22.pdf)
 
-Code for our ECCV 2022 paper "WISE: Whitebox Image Stylization by Example-based Learning" [arxiv version](https://arxiv.org/abs/2207.14606). Watch an introductory video [here](https://www.youtube.com/watch?v=GSVI26DDQrc). Included are the introduced applications of differentiable algorithmic stylization effects using:
+Official Pytorch implementation of WISE, a framework for whitebox style transfer and image-to-image translation using algorithmic stylization effects.<br><br>
+[WISE: Whitebox Image Stylization by Example-based Learning](https://ivpg.hpi3d.de/wise)  
+ [Winfried Lötzsch](https://scholar.google.de/citations?user=wAVKdLcAAAAJ&hl=de)\*<sup>1</sup>,
+ [Max Reimann](https://hpi.de/doellner/people/max-reimann.html)\*<sup>1</sup>,
+ [Martin Büßemeyer](https://www.researchgate.net/profile/Martin-Buessemeyer)<sup>1</sup>,
+ [Amir Semmo](http://asemmo.github.io/)<sup>2</sup>,
+ [Jürgen Döllner](https://hpi.de/forschung/fachgebiete/computergrafische-systeme.html)<sup>1</sup>,
+ [Matthias Trapp](https://hpi.de/doellner/people/trapp.html)<sup>1</sup> <br>
+ <sup>1</sup>Hasso Plattner Insitute, University of Potsdam, Germany, <sup>2</sup>Digitalmasterpieces GmbH, Germany<br/> 
+  \*denotes equal contribution  
+in ECCV 2022
+
+<img src='imgs/overview.jpg'/>
+
+Included are the introduced applications of differentiable algorithmic stylization effects using:
 
 - Global Parameter Prediction
 - Local Parameter Prediction
@@ -23,7 +38,12 @@ python -m global_ppn.train_and_test_parameter_prediction \
     --task predict
 ```
 
-Download the NPR portrait benchmark from [google drive](https://drive.google.com/drive/folders/1roLV3A8EIH2UAfTcfnR1jZVs6pJkLwMJ?usp=sharing) (original dataset can be found [here](http://users.cs.cf.ac.uk/Paul.Rosin/NPRportraitV01/)) and place it under experiments/nprp for tests on this dataset. The version from google drive includes parameter presets for xDoG (.pt files) for ground truth.
+Download the NPR portrait benchmark from [google drive](https://drive.google.com/drive/folders/1roLV3A8EIH2UAfTcfnR1jZVs6pJkLwMJ?usp=sharing) (original dataset can be found [here]a(http://users.cs.cf.ac.uk/Paul.Rosin/NPRportraitV01/)) and place it under experiments/nprp for tests on this dataset. The version from google drive includes parameter presets for xDoG (.pt files) for ground truth.
+
+Example for training on hand-drawn references:
+<p align="center">
+<img src='imgs/global_ppn.jpg' width="70%" />
+</p>
 
 Example call for training:
 ```
@@ -44,6 +64,9 @@ Trained global models can be found under trained_models/global.
 
 ## Local Parameter Prediction
 For testing our model on the APDrawing dataset, the pretrained generator needs to be placed at trained_models/ours_apdrawing/latest_net_G.pth. The options (no dropout, resnet convolution generator, using xDoG) must be set accordingly. The dataroot folder must point to the APDrawing dataset (see below for download instructions). 
+
+<img src='imgs/xdog_apdrawing.jpg'/>
+
 
 Example call for test (our method on APDrawing dataset):
 ```
