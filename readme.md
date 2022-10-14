@@ -1,4 +1,4 @@
-# Differentiable algorithmic stylization effects (ECCV'22)
+# Differentiable algorithmic stylization effects in Pytorch
 ### [Project Page](https://ivpg.hpi3d.de/wise) | [Video](https://youtu.be/GSVI26DDQrc) | [Paper](https://arxiv.org/abs/2207.14606) | [Poster](https://ivpg.hpi3d.de/wise/material/poster_eccv22.pdf)
 
 Official Pytorch implementation of WISE, a framework for whitebox style transfer and image-to-image translation using algorithmic stylization effects.<br><br>
@@ -9,7 +9,7 @@ Official Pytorch implementation of WISE, a framework for whitebox style transfer
  [Amir Semmo](http://asemmo.github.io/)<sup>2</sup>,
  [Jürgen Döllner](https://hpi.de/forschung/fachgebiete/computergrafische-systeme.html)<sup>1</sup>,
  [Matthias Trapp](https://hpi.de/doellner/people/trapp.html)<sup>1</sup> <br>
- <sup>1</sup>Hasso Plattner Insitute, University of Potsdam, Germany, <sup>2</sup>Digitalmasterpieces GmbH, Germany<br/> 
+ <sup>1</sup>Hasso Plattner Institute, University of Potsdam, Germany, <sup>2</sup>Digitalmasterpieces GmbH, Germany<br/> 
   \*denotes equal contribution  
 in ECCV 2022
 
