@@ -9,15 +9,14 @@ from PIL import Image
 from torch.nn import Module, Parameter
 from torch.nn.functional import mse_loss
 from torch.optim import Adam
+from tqdm.auto import tqdm
 
 from effects.gauss2d_xy_separated import Gauss2DEffect
 from helpers import np_to_torch, make_save_path, torch_to_np
 from helpers.visual_parameter_def import VisualParameterDef
-from helpers.losses import TotalVariationLoss
 
 CONFIG = {
     "lr_start": 0.1,
-    "tvl_factor": 100.0,
     "lr_stop": 0.001,
     "lr_decay": 0.9,
     "lr_decay_start": 10,
@@ -37,7 +36,6 @@ def run_optimization_loop(module, vp_grad, data_in, target, verbose=True, loss_f
     data_in = data_in.to(device)
     target = target.to(device)
 
-    var_loss = TotalVariationLoss()
 
     if isinstance(loss_f, torch.nn.Module):
         loss_f = loss_f.to(device)
@@ -47,7 +45,7 @@ def run_optimization_loop(module, vp_grad, data_in, target, verbose=True, loss_f
     avg_grads = {}
     all_p_values = []
 
-    for i in range(config["n_iterations"]):
+    for i in tqdm(range(config["n_iterations"])):
         if i % 5 == 0 and i > config["lr_decay_start"]:
             lr = lr * config["lr_decay"]
 
@@ -60,8 +58,6 @@ def run_optimization_loop(module, vp_grad, data_in, target, verbose=True, loss_f
 
         out = module(data_in, vp_grad())
         loss = loss_f(out, target)
-        if len(vp_grad.vp.shape) == 4:
-            loss += var_loss(vp_grad.vp) * CONFIG["tvl_factor"]
 
         if vp_aux_loss is not None:
             loss += vp_aux_loss(vp_grad())
@@ -240,7 +236,7 @@ class UpdateSingleVPContainer(Module):
 def optimize_single_parameter(save_path, preset, target_module,
                               uniform_name="num_bins", uniform_start=5.0,
                               uniform_target=10.0,
-                              verbose=True, config=None):
+                              verbose=True, config=None, ymin=-0.51, ymax=0.51):
     n_trials = 1
     target_module.enable_checkpoints()
 
@@ -268,7 +264,7 @@ def optimize_single_parameter(save_path, preset, target_module,
         fig, ax = plt.subplots()
         ax.plot(data)
         ax.axhline(uniform_target)
-        ax.set_ylim([-0.51, 0.51])
+        ax.set_ylim([ymin, ymax])
         ax.set_ylabel(f"{uniform_name} parameter")
         ax.set_xlabel(f"iteration")
 

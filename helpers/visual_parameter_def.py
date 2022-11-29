@@ -1,5 +1,13 @@
+from copy import deepcopy
 import torch
 from helpers.scale_visual_parameters import ScaleVisualParameters
+
+optional_param_map = {
+    'enable_depth_enhance': [("depthPower", 0.0, 4.0),
+                             ("depthColorTransfer", 0.0, 1.0)],
+    'enable_adapt_hue_preprocess': [("adaptHuePreprocess", 0.0, 1.0)],
+    'enable_adapt_hue_postprocess': [("adaptHuePostprocess", 0.0, 1.0)]
+}
 
 xdog_vp_ranges = [("brightness", -0.15, 0.5),
                   ("contrast", 0.2, 3.0),
@@ -18,7 +26,6 @@ portrait_preset = [("brightness", 0.1),
                    ("details", 2.27),
                    ("blackness", 0.15)]
 
-
 sketch_preset = [("brightness", 0.1),
                  ("contrast", 1.0),
                  ("saturation", 0.0),
@@ -26,6 +33,66 @@ sketch_preset = [("brightness", 0.1),
                  ("contour", 3.0),
                  ("details", 1.3),
                  ("blackness", 0.5)]
+
+minimal_pipeline_vp_ranges = [("contour", 0.0, 100.0),
+                              ("contourOpacity", 0.0, 1.0),
+                              ("bumpScale", 0.0, 17.0),
+                              ("bumpSpecular", 0.5, 20.0),
+                              ("bumpOpacity", 0.0, 1.0),
+                              ("colorfulness", -1.4, 2.0),
+                              ("luminosityOffset", -1.0, 1.0),
+                              ("contrast", 0.5, 4.0),
+                              ("hueShift", -2.0, 2.0)]
+
+minimal_pipeline_presets = [("contour", 50),
+                            ("contourOpacity", 0.0),
+                            ("bumpScale", 3.0),
+                            ("bumpSpecular", 1.0),
+                            ("bumpOpacity", 0.0),
+                            ("colorfulness", 1.5),
+                            ("luminosityOffset", 0.0),
+                            ("contrast", 1.0),
+                            ("hueShift", 0.0)]
+
+minimal_pipeline_bump_mapping_preset = [("contour", 50),
+                                        ("contourOpacity", 0.2),
+                                        ("bumpScale", 17.0),
+                                        ("bumpSpecular", 15.0),
+                                        ("bumpOpacity", 0.6),
+                                        ("colorfulness", 1.5),
+                                        ("luminosityOffset", -0.0),
+                                        ("contrast", 1.5),
+                                        ("hueShift", 0.0)]
+
+minimal_pipeline_xdog_preset = [("contour", 100),
+                                ("contourOpacity", 0.8),
+                                ("bumpScale", 3.0),
+                                ("bumpSpecular", 1.0),
+                                ("bumpOpacity", 0.2),
+                                ("colorfulness", 1.5),
+                                ("luminosityOffset", -0.1),
+                                ("contrast", 1.5),
+                                ("hueShift", 0.0)]
+
+
+
+
+def remove_optional_presets(presets, **kwargs):
+    presets = deepcopy(presets)
+    for optional_param_arg_name, optional_vp_ranges in optional_param_map.items():
+        if not kwargs.get(optional_param_arg_name, False):
+            preset_names_to_remove = [optional_vp_range[0] for optional_vp_range in optional_vp_ranges]
+            presets = list(filter(lambda preset: preset[0] not in preset_names_to_remove, presets))
+    return presets
+
+
+def add_optional_params(params, **kwargs):
+    params = deepcopy(params)
+    for optional_param_arg_name, optional_vp_ranges in optional_param_map.items():
+        if kwargs.get(optional_param_arg_name, False):
+            optional_params = [optional_vp_range[0] for optional_vp_range in optional_vp_ranges]
+            params.extend(optional_params)
+    return params
 
 
 class VisualParameterDef:

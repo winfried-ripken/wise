@@ -44,11 +44,14 @@ def np_to_torch(img, add_batch_dim=True, divide_by_255=True):
     return img_torch
 
 
-def torch_to_np(tensor, clamp=False):
+def torch_to_np(tensor, clamp=False, multiply_by_255=False):
     tensor = tensor.detach().squeeze().cpu().numpy()
 
     if clamp:
         tensor = np.clip(tensor, 0.0, 1.0)
+
+    if multiply_by_255:
+        tensor *= 255.0
 
     if len(tensor.shape) < 3:
         return tensor

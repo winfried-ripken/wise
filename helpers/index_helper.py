@@ -22,6 +22,15 @@ class IndexHelper:
             return result
 
     @staticmethod
+    def same_img_size(*tensors: torch.tensor):
+        img_shape = tensors[0].shape[2:]
+        for tensor in tensors:
+            if img_shape != tensor.shape[2:]:
+                return False
+        return True
+
+
+    @staticmethod
     def generate_result(result):
         return opengl_round(result)
 
@@ -71,6 +80,10 @@ class IndexHelper:
     @staticmethod
     def cat(*tensors):
         return torch.cat(tensors, dim=1)
+
+    @staticmethod
+    def cross(a, b):
+        return torch.cross(a, b, dim=1)
 
     @staticmethod
     def mat2(a00, a01, a10, a11):

@@ -9,10 +9,10 @@ class Gauss2DEffect(torch.nn.Module):
         self.dxdy = dxdy
         self.dim_kernsize = dim_kernsize
 
-    def forward(self, x, sigma):
+    def forward(self, x, sigma, precisionFactor=1.0):
         i = IndexHelper(x)
 
-        sigma = i.view(sigma, dims=5) * i.input_size_factor()
+        sigma = i.view(sigma, dims=5) * i.input_size_factor() * precisionFactor
         twoSigmaSquare = 2.0 * sigma * sigma
         halfStepWidth = torch.ceil(2.0 * sigma)
         direction = torch.tensor(self.dxdy, device=x.device).reshape(1, 2, 1, 1) / i.tex_size()

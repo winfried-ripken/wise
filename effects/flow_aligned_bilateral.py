@@ -15,6 +15,7 @@ class FlowAlignedBilateralEffect(torch.nn.Module):
 
     def forward(self, x, tangent, sigmaD, sigmaR, guide=None):
         i = IndexHelper(x)
+        x, x_a = i.get_rgb_and_alpha(x)
         bs = tangent.shape[0]
         image_height = tangent.shape[2]
         image_width = tangent.shape[3]
@@ -87,4 +88,7 @@ class FlowAlignedBilateralEffect(torch.nn.Module):
         sum += ((kernelD * kE0).repeat(1, 1, x.size(1), 1, 1) * c0).sum(dim=1)
         sum += ((kernelD * kE1).repeat(1, 1, x.size(1), 1, 1) * c1).sum(dim=1)
 
-        return sum / norm
+        res = sum / norm
+        if x_a is not None:
+            res = i.cat(res, x_a)
+        return res
