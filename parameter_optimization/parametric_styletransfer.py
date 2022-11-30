@@ -4,6 +4,7 @@ import os
 import imageio
 import torch
 import torch.nn.functional as F
+from PIL import Image
 
 from pathlib import Path
 
@@ -81,6 +82,7 @@ def single_optimize(module, preset, loss_name, s, t,
     # save the parameter maps
     xxx = grad_vp()
     torch.save(xxx.detach().clone(), f"{output_name}.pt")
+    return xxx, batch_im
 
 
 def strotss_process(s, t, base_dir=f"{os.path.dirname(__file__)}/../experiments/result",
