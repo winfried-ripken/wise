@@ -1,7 +1,11 @@
 # Differentiable algorithmic stylization effects in Pytorch
 ### [Project Page](https://ivpg.hpi3d.de/wise) | [Video](https://youtu.be/GSVI26DDQrc) | [Paper](https://arxiv.org/abs/2207.14606) | [Poster](https://ivpg.hpi3d.de/wise/material/poster_eccv22.pdf)
-
 Official Pytorch implementation of WISE, a framework for whitebox style transfer and image-to-image translation using algorithmic stylization effects.<br><br>
+## Updates
+**🚀 New: Check out the [Huggingface Live Demo of WISE](https://huggingface.co/spaces/MaxReimann/Whitebox-Style-Transfer-Editing) 🚀**<br>
+Alternatively run the **[editing demo](https://github.com/MaxReimann/WISE-Editing)** on your local machine.
+
+## WISE Framework
 [WISE: Whitebox Image Stylization by Example-based Learning](https://ivpg.hpi3d.de/wise)  
  [Winfried Lötzsch](https://scholar.google.de/citations?user=wAVKdLcAAAAJ&hl=de)\*<sup>1</sup>,
  [Max Reimann](https://hpi.de/doellner/people/max-reimann.html)\*<sup>1</sup>,
@@ -21,7 +25,7 @@ Included are the introduced applications of differentiable algorithmic stylizati
 - Local Parameter Prediction
 - Parameter Optimization (Parametric Style Transfer and checks for individual parameters)
 
-We included the differentiable XDoG effect. 
+We included a minimal stylization pipeline to show NST optimization, as well as xDoG for model-based prediction. 
 Note that due to proprietary code, we can't include or open-source our Watercolor, Oilpaint and Toon effect implementation. 
 
 Trained models can be downloaded from [google drive](https://drive.google.com/drive/folders/1WdRDw7-ivrpXNmbccMJ4HbtrV-zloD9o?usp=sharing), and put in the trained_models directory (see below).
