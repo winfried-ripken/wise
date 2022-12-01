@@ -10,11 +10,9 @@ class ScaleVisualParameters(nn.Module):
         self.params_min = torch.zeros((len(vp_ranges),))  # , persistent=False
         self.params_span = torch.zeros((len(vp_ranges),))  # , persistent=False
 
-        i = 0
-        for n, low, high in vp_ranges:
+        for i, (n, low, high) in enumerate(vp_ranges):
             self.params_min[i] = torch.tensor(low)
             self.params_span[i] = torch.tensor(high - low)
-            i += 1
 
     def forward(self, tensor, scale_back=False):
         p_min = self.params_min.type_as(tensor)

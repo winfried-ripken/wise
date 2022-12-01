@@ -72,4 +72,4 @@ class XDoGPass1Effect(torch.nn.Module):
                         torch.ones_like(H),
                         1 + torch.tanh(100.0 * i.view(phi) * (H - epsilon)))
 
-        return i.idx(1 - H, "xxx")
+        return torch.cat([i.idx(1 - H, "x"), torch.zeros_like(i.idx(1 - H, "x")), torch.zeros_like(i.idx(1 - H, "x"))], dim=1)

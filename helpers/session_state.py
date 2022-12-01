@@ -19,14 +19,20 @@ result:
 'Mary'
 
 """
-try:
-    import streamlit.ReportThread as ReportThread
-    from streamlit.server.Server import Server
-except Exception:
-    # Streamlit >= 0.65.0
-    import streamlit.report_thread as ReportThread
-    from streamlit.server.server import Server
 
+INBUILT_SESS_STATE = True
+try:
+    import streamlit as st 
+    session_state = st.session_state # from 1.10
+except Exception:
+    INBUILT_SESS_STATE = False
+    try:
+        import streamlit.ReportThread as ReportThread
+        from streamlit.server.Server import Server
+    except Exception:
+        # Streamlit >= 0.65.0
+        import streamlit.report_thread as ReportThread
+        from streamlit.server.server import Server
 
 class SessionState(object):
     def __init__(self, **kwargs):
@@ -76,6 +82,12 @@ def get(**kwargs):
     'Mary'
 
     """
+    if INBUILT_SESS_STATE:
+        for key, val in kwargs.items():
+            st.session_state[key] = val
+        return st.session_state
+        
+
     # Hack to get the session object from Streamlit.
 
     ctx = ReportThread.get_report_ctx()

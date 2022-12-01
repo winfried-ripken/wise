@@ -12,6 +12,7 @@ from effects.structure_tensor import StructureTensorEffect
 from helpers.color_conversion import rgb_to_yuv
 from helpers.hist_layers import SingleDimHistLayer
 from helpers.hist_metrics import DeepHistLoss, EarthMoversDistanceLoss
+from helpers.index_helper import IndexHelper
 from helpers.ms_ssim import MixLoss
 from helpers.vgg_feature_extractor import Vgg19FeatureExtractor
 
@@ -27,8 +28,14 @@ def gram_matrix(input):
     return G.div(b * c * d)
 
 
+def get_individual_syle_weight(gram_matrices):
+    return 3 / (sum(torch.linalg.norm(style_gram_matrix) for style_gram_matrix in gram_matrices) / len(gram_matrices))
+
+
 class PerceptualLoss(nn.Module):
-    def __init__(self, style_image_path, image_dim=1024, style_weight=1e10, content_weight=1e5, lightning_module=None, **kwargs):
+    def __init__(self, style_image_path, image_dim, style_img_keep_aspect_ratio, style_weight=1e10, content_weight=1e5,
+                 lightning_module=None,
+                 **kwargs):
         super().__init__()
 
         if lightning_module is not None:
@@ -40,23 +47,34 @@ class PerceptualLoss(nn.Module):
         self.content_weight = content_weight
         self.style_weight = style_weight
 
-        style_image = Image.open(style_image_path).convert("RGB").resize((image_dim, image_dim))
-        style_image = ToTensor()(style_image).unsqueeze(0)
-        self.target_style = self.generate_targets(style_image)
+        style_image = Image.open(style_image_path).convert("RGB")
+
+        style_image = ToTensor()(style_image)
+        if image_dim:
+            size = image_dim if style_img_keep_aspect_ratio else (image_dim, image_dim)
+            style_image = style_image.resize(size)
+        self.target_styles = self.generate_targets(style_image.unsqueeze(0))
 
     def generate_targets(self, style_image):
         features = self.vgg(style_image)
-        return [gram_matrix(f) for f in features]
+        gram_matrices = [gram_matrix(f) for f in features]
+        return [style_gram_matrix * get_individual_syle_weight(gram_matrices)
+                for style_gram_matrix in gram_matrices]
+
+    def move_tensors(self, device):
+        self.vgg.mean = self.vgg.mean.to(device)
+        self.vgg.std = self.vgg.std.to(device)
+        self.target_styles = [gram.to(device) for gram in self.target_styles]
 
     def forward(self, x, y):
         y_feat = self.vgg(y)
         x_feat = self.vgg(x)
-        content_loss = self.content_weight * self.mse_loss(x_feat.relu2_2, y_feat.relu2_2)
+        content_loss = self.content_weight * self.mse_loss(x_feat.conv_4, y_feat.conv_4)
 
-        y_gram = [gram_matrix(f) for f in y_feat]
+        y_grams = [gram_matrix(f) for f in y_feat]
         style_loss = self.style_weight * torch.stack(
-            [self.mse_loss(e[0], e[1].to(x.device).repeat(e[0].size(0), 1, 1))
-             for e in zip(y_gram, self.target_style)]).sum()
+            [self.mse_loss(y_gram, target_style.to(x.device).repeat(y_gram.size(0), 1, 1))
+             for y_gram, target_style in zip(y_grams, self.target_styles)]).sum()
 
         return content_loss, style_loss
 
@@ -76,6 +94,7 @@ class PerceptualStyleLoss(nn.Module):
         style_image = Image.open(style_image_path).convert("RGB").resize((image_dim, image_dim))
         style_image = ToTensor()(style_image).unsqueeze(0)
 
+        self.vgg = Vgg19FeatureExtractor()
         self.style_weight = style_weight
         self.target_style = self.generate_targets(style_image)
         self.mse_loss = MSELoss()
@@ -85,7 +104,9 @@ class PerceptualStyleLoss(nn.Module):
 
     def generate_targets(self, style_image):
         features = self.vgg(style_image)
-        return [gram_matrix(f) for f in features]
+        gram_matrices = [gram_matrix(f) for f in features]
+        return [style_gram_matrix * get_individual_syle_weight(gram_matrices)
+                for style_gram_matrix in gram_matrices]
 
     def forward(self, y):
         assert self.target_style is not None
