@@ -1,11 +1,18 @@
 # Differentiable algorithmic stylization effects in Pytorch
+
+https://user-images.githubusercontent.com/5698958/205054885-12325495-4e19-4a14-986e-649364ca2aa2.mp4
+
+
 ### [Project Page](https://ivpg.hpi3d.de/wise) | [Video](https://youtu.be/GSVI26DDQrc) | [Paper](https://arxiv.org/abs/2207.14606) | [Poster](https://ivpg.hpi3d.de/wise/material/poster_eccv22.pdf)
-Official Pytorch implementation of WISE, a framework for whitebox style transfer and image-to-image translation using algorithmic stylization effects.<br><br>
+Official Pytorch implementation of WISE, a framework for *white-box style transfer* and img2img translation using *algorithmic stylization effects*.<br><br>
+
 ## Updates
 **🚀 New: Check out the [Huggingface Live Demo of WISE](https://huggingface.co/spaces/MaxReimann/Whitebox-Style-Transfer-Editing) 🚀**<br>
 Alternatively run the **[editing demo](https://github.com/MaxReimann/WISE-Editing)** on your local machine.
 
+
 ## WISE Framework
+
 [WISE: Whitebox Image Stylization by Example-based Learning](https://ivpg.hpi3d.de/wise)  
  [Winfried Lötzsch](https://scholar.google.de/citations?user=wAVKdLcAAAAJ&hl=de)\*<sup>1</sup>,
  [Max Reimann](https://hpi.de/doellner/people/max-reimann.html)\*<sup>1</sup>,
