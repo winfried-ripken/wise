@@ -113,4 +113,4 @@ if __name__ == '__main__':
     args = parser.parse_args()
     effect, preset, _ = get_default_settings(args.effect)
     effect.enable_checkpoints()
-    strotss_process(args.content, args.style, effect=effect, preset=preset)
+    strotss_process(args.content, args.style, effect=effect, preset=preset, cpu=args.cpu)
